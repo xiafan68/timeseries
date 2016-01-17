@@ -11,9 +11,9 @@ public abstract class Similarity {
 	private final static Map<String, Similarity> sims = new HashMap<String, Similarity>();
 
 	static {
-		sims.put(CosineSim.class.getName(), new CosineSim());
-		sims.put(PearsonSim.class.getName(), new PearsonSim());
-		sims.put(GrangerSim.class.getName(), new GrangerSim());
+		sims.put(CosineSim.class.getSimpleName(), new CosineSim());
+		sims.put(PearsonSim.class.getSimpleName(), new PearsonSim());
+		sims.put(GrangerSim.class.getSimpleName(), new GrangerSim());
 	}
 
 	public static Similarity getSim(String type) {
