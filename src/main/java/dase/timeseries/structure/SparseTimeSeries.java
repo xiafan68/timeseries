@@ -143,9 +143,9 @@ public class SparseTimeSeries extends ITimeSeries {
 				}
 				start += ser.granu;
 			}
-			if (curStart > start)
+			if (start > curStart)
 				intervals.add(new Long[] { curStart, start - ser.granu });
-			if (ser.getValueAt(start) < max * 0.2) {
+			if (start <= ser.getEndTime() && ser.getValueAt(start) < max * 0.2) {
 				start += ser.granu;
 			}
 		}
