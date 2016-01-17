@@ -30,7 +30,7 @@ public class DenseTimeSeries extends ITimeSeries {
 
 	@Override
 	public void addValueAtIdx(int idx, double val) {
-		data[getIndx(idx)] += val;
+		data[idx] += val;
 	}
 
 	@Override
