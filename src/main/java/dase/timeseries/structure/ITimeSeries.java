@@ -65,7 +65,7 @@ public abstract class ITimeSeries {
 		long startTime = Integer.MAX_VALUE;
 		long endTime = Integer.MIN_VALUE;
 		for (ITimeSeries ts : series) {
-			startTime = Math.min(startTime, ts.getEndTime());
+			startTime = Math.min(startTime, ts.getStartTime());
 			endTime = Math.max(endTime, ts.getEndTime());
 		}
 		
