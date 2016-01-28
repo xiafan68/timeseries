@@ -62,7 +62,14 @@ public abstract class ITimeSeries {
 
 	public static ITimeSeries merge(List<ITimeSeries> series) {
 		ITimeSeries first = series.get(0);
-		ITimeSeries ret = new DenseTimeSeries(first.getGranu(), first.getStartTime(), first.getEndTime());
+		long startTime = Integer.MAX_VALUE;
+		long endTime = Integer.MIN_VALUE;
+		for (ITimeSeries ts : series) {
+			startTime = Math.min(startTime, ts.getEndTime());
+			endTime = Math.max(endTime, ts.getEndTime());
+		}
+		
+		ITimeSeries ret = new DenseTimeSeries(first.getGranu(), startTime, endTime);
 		for (ITimeSeries ser : series) {
 			ret.merge(ser);
 		}
