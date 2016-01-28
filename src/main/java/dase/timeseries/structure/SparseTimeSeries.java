@@ -3,6 +3,7 @@ package dase.timeseries.structure;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,26 +25,26 @@ public class SparseTimeSeries extends ITimeSeries {
 	public SparseTimeSeries(List<long[]> ts, int granu, long startTime, long endTime) {
 		super(granu, startTime, endTime);
 		for (long[] point : ts) {
-			baseTs.put(getIndx(point[0]), (double) point[1]);
+			baseTs.put(getIndex(point[0]), (double) point[1]);
 		}
 	}
 
 	public SparseTimeSeries(Map<Long, Long> ts, int granu, long startTime, long endTime) {
 		super(granu, startTime, endTime);
 		for (Entry<Long, Long> point : ts.entrySet()) {
-			baseTs.put(getIndx(point.getKey()), (double) point.getValue());
+			baseTs.put(getIndex(point.getKey()), (double) point.getValue());
 		}
 	}
 
 	public double getValueAt(long time) {
-		if (baseTs.containsKey(getIndx(time))) {
-			return baseTs.get(getIndx(time));
+		if (baseTs.containsKey(getIndex(time))) {
+			return baseTs.get(getIndex(time));
 		} else {
 			return 0f;
 		}
 	}
 
-	public int getIndx(long time) {
+	public int getIndex(long time) {
 		return (int) ((time - startTime) / granu);
 	}
 
@@ -56,7 +57,7 @@ public class SparseTimeSeries extends ITimeSeries {
 	}
 
 	public void addValueAtTime(long time, double val) {
-		int idx = getIndx(time);
+		int idx = getIndex(time);
 		addValueAtIdx(idx, val);
 	}
 
@@ -84,22 +85,6 @@ public class SparseTimeSeries extends ITimeSeries {
 			ret[i++] = getValueAtIdx(i);
 		}
 		return ret;
-	}
-
-	public void merge(ITimeSeries series) {
-		startTime = Math.min(startTime, series.startTime);
-		endTime = Math.max(endTime, series.endTime);
-		granu = series.granu;
-		if (series instanceof SparseTimeSeries) {
-			for (Entry<Integer, Double> entry : ((SparseTimeSeries) series).baseTs.entrySet()) {
-				addValueAtIdx(entry.getKey(), entry.getValue());
-			}
-		} else {
-			for (int i = 0; i < series.length(); i++) {
-				addValueAtIdx(i, series.getValueAtIdx(i));
-			}
-		}
-
 	}
 
 	public double maxValue() {
@@ -172,5 +157,26 @@ public class SparseTimeSeries extends ITimeSeries {
 
 	public int getGranu() {
 		return granu;
+	}
+
+	@Override
+	public Iterator<Long> timeIterator() {
+		return new Iterator<Long>() {
+			Iterator<Integer> iter = baseTs.keySet().iterator();
+
+			@Override
+			public boolean hasNext() {
+				return iter.hasNext();
+			}
+
+			@Override
+			public Long next() {
+				return iter.next() * (long) granu + startTime;
+			}
+
+			@Override
+			public void remove() {
+			}
+		};
 	}
 }
