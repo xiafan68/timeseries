@@ -1,5 +1,6 @@
 package dase.timeseries.structure;
 
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -14,7 +15,7 @@ public class DenseTimeSeries extends ITimeSeries {
 
 	@Override
 	public double getValueAt(long time) {
-		return data[getIndx(time)];
+		return data[getIndex(time)];
 	}
 
 	@Override
@@ -24,7 +25,7 @@ public class DenseTimeSeries extends ITimeSeries {
 
 	@Override
 	public void addValueAtTime(long time, double val) {
-		data[getIndx(time)] += val;
+		data[getIndex(time)] += val;
 
 	}
 
@@ -53,18 +54,26 @@ public class DenseTimeSeries extends ITimeSeries {
 	}
 
 	@Override
-	public void merge(ITimeSeries series) {
-		if (series instanceof DenseTimeSeries) {
-			DenseTimeSeries o = (DenseTimeSeries) series;
-			for (int i = 0; i < length(); i++) {
-				data[i] += o.data[i];
+	public Iterator<Long> timeIterator() {
+		return new Iterator<Long>() {
+			long cur = startTime;
+
+			@Override
+			public boolean hasNext() {
+				return cur < endTime;
 			}
-		} else {
-			SparseTimeSeries o = (SparseTimeSeries) series;
-			for (Entry<Integer, Double> entry : o.baseTs.entrySet()) {
-				data[entry.getKey()] += entry.getValue();
+
+			@Override
+			public Long next() {
+				Long ret = cur;
+				cur += granu;
+				return ret;
 			}
-		}
+
+			@Override
+			public void remove() {
+			}
+		};
 	}
 
 }
