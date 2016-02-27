@@ -110,7 +110,7 @@ public class SparseTimeSeries extends ITimeSeries {
 	}
 
 	public int length() {
-		return (int) (endTime - startTime) / granu;
+		return (int) ((endTime - startTime) / granu);
 	}
 
 	public double avg() {

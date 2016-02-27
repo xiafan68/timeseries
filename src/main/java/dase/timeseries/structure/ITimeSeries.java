@@ -44,7 +44,7 @@ public abstract class ITimeSeries {
 	public abstract double maxValue();
 
 	public int length() {
-		return (int) (endTime - startTime) / granu + 1;
+		return (int)( (endTime - startTime) / granu + 1);
 	}
 
 	public abstract double avg();
