@@ -1,5 +1,6 @@
 package dase.timeseries.structure;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -15,13 +16,13 @@ public abstract class ITimeSeries {
 
 	public ITimeSeries(int granu, long startTime, long endTime) {
 		this.granu = granu;
-		this.startTime = startTime;
-		this.endTime = endTime;
+		this.startTime = startTime / granu * granu;
+		this.endTime = endTime / granu * granu;
 	}
 
 	public abstract double getValueAt(long time);
 
-	public int getIndx(long time) {
+	public int getIndex(long time) {
 		return (int) ((time - startTime) / granu);
 	}
 
@@ -30,6 +31,8 @@ public abstract class ITimeSeries {
 	public abstract void addValueAtTime(long time, double val);
 
 	public abstract void addValueAtIdx(int idx, double val);
+
+	public abstract Iterator<Long> timeIterator();
 
 	public long getStartTime() {
 		return startTime;
@@ -44,7 +47,7 @@ public abstract class ITimeSeries {
 	public abstract double maxValue();
 
 	public int length() {
-		return (int)( (endTime - startTime) / granu + 1);
+		return (int) ((endTime - startTime) / granu + 1);
 	}
 
 	public abstract double avg();
@@ -58,11 +61,24 @@ public abstract class ITimeSeries {
 		return var / length();
 	}
 
-	public abstract void merge(ITimeSeries series);
+	public void merge(ITimeSeries series) {
+		Iterator<Long> timeIter = series.timeIterator();
+		while (timeIter.hasNext()) {
+			long nextTime = timeIter.next();
+			addValueAtTime(nextTime, series.getValueAt(nextTime));
+		}
+	}
 
 	public static ITimeSeries merge(List<ITimeSeries> series) {
 		ITimeSeries first = series.get(0);
-		ITimeSeries ret = new DenseTimeSeries(first.getGranu(), first.getStartTime(), first.getEndTime());
+		long startTime = Long.MAX_VALUE;
+		long endTime = Long.MIN_VALUE;
+		for (ITimeSeries ts : series) {
+			startTime = Math.min(startTime, ts.getStartTime());
+			endTime = Math.max(endTime, ts.getEndTime());
+		}
+
+		ITimeSeries ret = new DenseTimeSeries(first.getGranu(), startTime, endTime);
 		for (ITimeSeries ser : series) {
 			ret.merge(ser);
 		}
