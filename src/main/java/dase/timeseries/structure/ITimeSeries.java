@@ -50,6 +50,15 @@ public abstract class ITimeSeries {
 		return (int) ((endTime - startTime) / granu + 1);
 	}
 
+	public double total() {
+		double sum = 0.0f;
+		Iterator<Long> timeIter = timeIterator();
+		while (timeIter.hasNext()) {
+			sum += getValueAt(timeIter.next());
+		}
+		return sum;
+	}
+
 	public abstract double avg();
 
 	public double var() {
