@@ -118,41 +118,22 @@ public class SparseTimeSeries extends ITimeSeries {
 	public static Long[] outlineRange(ITimeSeries ser) {
 		double max = ser.maxValue();
 
-		long start = ser.getStartTime();
-		List<Long[]> intervals = new ArrayList<Long[]>();
-		while (start <= ser.getEndTime()) {
-			long curStart = start;
-			while (start <= ser.getEndTime()) {
-				if (ser.getValueAt(start) < max * 0.2) {
-					break;
-				}
-				start += ser.granu;
+		long curTime = ser.getStartTime();
+		while (curTime <= ser.getEndTime()) {
+			if (ser.getValueAt(curTime) >= max * 0.1) {
+				break;
 			}
-			if (start > curStart)
-				intervals.add(new Long[] { curStart, start - ser.granu });
-			if (start <= ser.getEndTime() && ser.getValueAt(start) < max * 0.2) {
-				start += ser.granu;
-			}
+			curTime += ser.getGranu();
 		}
-
-		Collections.sort(intervals, new Comparator<Long[]>() {
-
-			@Override
-			public int compare(Long[] o1, Long[] o2) {
-				int len1 = (int) (o1[1] - o1[0]);
-				int len2 = (int) (o2[1] - o2[0]);
-				int ret = Integer.compare(len2, len1);
-				if (ret == 0) {
-					ret = Long.compare(o1[0], o2[0]);
-				}
-				return ret;
+		long startTime = curTime;
+		curTime = ser.getEndTime();
+		while (curTime >= ser.getStartTime()) {
+			if (ser.getValueAt(curTime) > max * 0.2) {
+				break;
 			}
-
-		});
-		if (intervals.size() > 0)
-			return intervals.get(0);
-		else
-			return new Long[] { ser.getStartTime(), ser.getEndTime() };
+			curTime -= ser.getGranu();
+		}
+		return new Long[] { startTime, curTime };
 	}
 
 	public int getGranu() {
