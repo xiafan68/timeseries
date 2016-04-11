@@ -108,7 +108,7 @@ public abstract class ITimeSeries {
 		Iterator<Long> iter = this.timeIterator();
 		while (iter.hasNext()) {
 			long time = iter.next();
-			buf.append(String.format("%d:%d;", time, getValueAt(time)));
+			buf.append(String.format("%d:%f;", time, getValueAt(time)));
 		}
 		return buf.toString();
 	}
