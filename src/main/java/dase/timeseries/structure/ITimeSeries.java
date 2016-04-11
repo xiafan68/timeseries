@@ -101,4 +101,15 @@ public abstract class ITimeSeries {
 	public int getGranu() {
 		return granu;
 	}
+
+	@Override
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		Iterator<Long> iter = this.timeIterator();
+		while (iter.hasNext()) {
+			long time = iter.next();
+			buf.append(String.format("%d:%d;", time, getValueAt(time)));
+		}
+		return buf.toString();
+	}
 }

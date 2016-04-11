@@ -1,7 +1,6 @@
 package dase.timeseries.structure;
 
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -75,5 +74,4 @@ public class DenseTimeSeries extends ITimeSeries {
 			}
 		};
 	}
-
 }
