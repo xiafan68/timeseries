@@ -120,7 +120,7 @@ public class SparseTimeSeries extends ITimeSeries {
 
 		long curTime = ser.getStartTime();
 		while (curTime <= ser.getEndTime()) {
-			if (ser.getValueAt(curTime) >= max * 0.1) {
+			if (ser.getValueAt(curTime) >= max * 0.05) {
 				break;
 			}
 			curTime += ser.getGranu();
@@ -128,7 +128,7 @@ public class SparseTimeSeries extends ITimeSeries {
 		long startTime = curTime;
 		curTime = ser.getEndTime();
 		while (curTime >= ser.getStartTime()) {
-			if (ser.getValueAt(curTime) > max * 0.2) {
+			if (ser.getValueAt(curTime) >= max * 0.05) {
 				break;
 			}
 			curTime -= ser.getGranu();
